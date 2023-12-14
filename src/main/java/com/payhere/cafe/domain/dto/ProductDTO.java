@@ -30,7 +30,4 @@ public class ProductDTO {
     private Date expirationDate;
 
     private String size;
-
-    public static class ProductController {
-    }
 }

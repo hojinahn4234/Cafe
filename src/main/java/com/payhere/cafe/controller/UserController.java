@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +21,13 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok(null);
+    }
+
     @PostMapping("/join")
-    public ResponseEntity<?> join(UserDTO user) {
+    public ResponseEntity<?> join(UserDTO user) throws NoSuchAlgorithmException {
         if(service.join(user) == 200) {
             return ResponseEntity.ok(null);
         }
@@ -30,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(String phoneNum, String pw) {
+    public ResponseEntity<?> login(String phoneNum, String pw) throws NoSuchAlgorithmException {
         if(service.login(phoneNum, pw) == 200) {
             return ResponseEntity.ok(null);
         }
@@ -41,6 +48,6 @@ public class UserController {
 
     @GetMapping("/logout")
     public ResponseEntity<?> logout() {
-        return null;
+        return ResponseEntity.ok(null);
     }
 }

@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-public interface UserService {
-    int join(UserDTO user);
+import java.security.NoSuchAlgorithmException;
 
-    int login(String phoneNum, String pw);
+public interface UserService {
+    int join(UserDTO user) throws NoSuchAlgorithmException;
+
+    int login(String phoneNum, String pw) throws NoSuchAlgorithmException;
 }
