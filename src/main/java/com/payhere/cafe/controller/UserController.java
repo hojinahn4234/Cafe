@@ -1,6 +1,6 @@
 package com.payhere.cafe.controller;
 
-import com.payhere.cafe.domain.dto.UserDTO;
+import com.payhere.cafe.entity.User;
 import com.payhere.cafe.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> join(UserDTO user) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> join(User user) throws NoSuchAlgorithmException {
         if(service.join(user) == 200) {
             return ResponseEntity
                     .ok(null);
@@ -54,6 +54,7 @@ public class UserController {
 
     @GetMapping("/logout")
     public ResponseEntity<?> logout() {
-        return ResponseEntity.ok(null);
+        return ResponseEntity
+                .ok(null);
     }
 }

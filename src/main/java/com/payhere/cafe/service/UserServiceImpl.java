@@ -1,6 +1,6 @@
 package com.payhere.cafe.service;
 
-import com.payhere.cafe.domain.dto.UserDTO;
+import com.payhere.cafe.entity.User;
 import com.payhere.cafe.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +15,8 @@ public class UserServiceImpl implements UserService{
     private UserRepository repository;
 
     @Override
-    public int join(UserDTO user) throws NoSuchAlgorithmException {
-        UserDTO requestUser = new UserDTO();
+    public int join(User user) throws NoSuchAlgorithmException {
+        User requestUser = new User();
         requestUser.setPhoneNum(user.getPhoneNum());
         requestUser.setPw(encrypt(user.getPw()));
         if(repository.findByPhoneNum(user.getPhoneNum()) == null) {

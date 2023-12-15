@@ -1,4 +1,4 @@
-package com.payhere.cafe.domain.dto;
+package com.payhere.cafe.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @Data
-public class ProductDTO {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
