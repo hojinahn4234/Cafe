@@ -22,27 +22,33 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok(null);
+    public String test() {
+        return "hello";
     }
 
     @PostMapping("/join")
     public ResponseEntity<?> join(UserDTO user) throws NoSuchAlgorithmException {
         if(service.join(user) == 200) {
-            return ResponseEntity.ok(null);
+            return ResponseEntity
+                    .ok(null);
         }
         else {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity
+                    .badRequest()
+                    .body(null);
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(String phoneNum, String pw) throws NoSuchAlgorithmException {
         if(service.login(phoneNum, pw) == 200) {
-            return ResponseEntity.ok(null);
+            return ResponseEntity
+                    .ok(null);
         }
         else {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity
+                    .badRequest()
+                    .body(null);
         }
     }
 

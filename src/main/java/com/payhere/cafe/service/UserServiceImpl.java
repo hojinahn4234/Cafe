@@ -1,36 +1,48 @@
 package com.payhere.cafe.service;
 
 import com.payhere.cafe.domain.dto.UserDTO;
-import com.payhere.cafe.mapper.UserMapper;
+import com.payhere.cafe.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService{
     @Autowired
-    private UserMapper mapper;
+    private UserRepository repository;
 
     @Override
     public int join(UserDTO user) throws NoSuchAlgorithmException {
         UserDTO requestUser = new UserDTO();
         requestUser.setPhoneNum(user.getPhoneNum());
         requestUser.setPw(encrypt(user.getPw()));
-        if(mapper.join(requestUser) == 1) {
-            return 200;
-        } else {
-            return 403;
+        if(repository.findByPhoneNum(user.getPhoneNum()) == null) {
+            if(repository.save(requestUser) != null) {
+                return 200;
+            } else {
+                return 2;
+            }
+        }
+        else {
+            return 1;
         }
     }
 
     @Override
     public int login(String phoneNum, String pw) throws NoSuchAlgorithmException {
-        if(mapper.login(phoneNum, encrypt(pw)) == 1) {
-            return 200;
+        UserDTO user = repository.findByPhoneNum(phoneNum);
+        if(user != null) {
+            if((user.getPw()).equals(encrypt(pw))) {
+                return 200;
+            }
+            else {
+                return 2;
+            }
         } else {
-            return 403;
+            return 1;
         }
     }
 
