@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public int login(String phoneNum, String pw) throws NoSuchAlgorithmException {
-        UserDTO user = repository.findByPhoneNum(phoneNum);
+        User user = repository.findByPhoneNum(phoneNum);
         if(user != null) {
             if((user.getPw()).equals(encrypt(pw))) {
                 return 200;

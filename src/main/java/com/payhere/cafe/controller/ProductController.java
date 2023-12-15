@@ -1,9 +1,6 @@
 package com.payhere.cafe.controller;
 
 
-import com.payhere.cafe.domain.dto.request.ProductListDTO;
-import com.payhere.cafe.domain.dto.request.ProductSearchDTO;
-import com.payhere.cafe.domain.dto.response.ProdDetailResponseDTO;
 import com.payhere.cafe.entity.Product;
 import com.payhere.cafe.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @RestController
@@ -39,16 +34,16 @@ public class ProductController {
 
     @GetMapping("/detail")
     public ResponseEntity<?> getProductDetail(@RequestBody Long productId) {
-        return ResponseEntity.ok().body(service.getProductDetail(productId))
+        return ResponseEntity.ok().body(service.getProductDetail(productId));
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> getProductList() {
-        return ResponseEntity.ok().body(service.getProductList());
+    public ResponseEntity<?> getProductList(@RequestBody int page) {
+        return ResponseEntity.ok().body(service.getProductList(page));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchProductList(@RequestBody ProductSearchDTO productSearch) {
-        return ResponseEntity.ok().body(service.searchProductList(productSearch));
+    public ResponseEntity<?> searchProductList(@RequestBody String keyword) {
+        return ResponseEntity.ok().body(service.searchProductList(keyword));
     }
 }
