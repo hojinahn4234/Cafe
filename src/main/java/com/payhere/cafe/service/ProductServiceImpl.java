@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService{
 
     public ProdDetailResponseDTO mapToProdDetailResponseDTO(Product product) {
         ProdDetailResponseDTO prodDetailResponseDTO = new ProdDetailResponseDTO();
-        prodDetailResponseDTO.setProductId(product.getProduct_id());
+        prodDetailResponseDTO.setProductId(product.getProductid());
         prodDetailResponseDTO.setName(product.getName());
 
         return prodDetailResponseDTO;

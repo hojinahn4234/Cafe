@@ -31,9 +31,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public int join(User user) throws NoSuchAlgorithmException {
         User requestUser = new User();
-        requestUser.setPhoneNum(user.getPhoneNum());
+        requestUser.setPhonenum(user.getPhonenum());
         requestUser.setPw(encrypt(user.getPw()));
-        if(repository.findByPhoneNum(user.getPhoneNum()) == null) {
+        if(repository.findByPhonenum(user.getPhonenum()) == null) {
             if(repository.save(requestUser) != null) {
                 return 200;
             } else {
@@ -47,9 +47,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public int login(LoginRequestDTO loginRequestDTO) throws NoSuchAlgorithmException {
-        User user = repository.findByPhoneNum(loginRequestDTO.getPhoneNum());
+        User user = repository.findByPhonenum(loginRequestDTO.getPhonenum());
         if(user != null) {
-            if((user.getPw()).equals(encrypt(loginRequestDTO.getPhoneNum()))) {
+            if((user.getPw()).equals(encrypt(loginRequestDTO.getPw()))) {
                 // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
                 // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
                 UsernamePasswordAuthenticationToken authenticationToken = loginRequestDTO.toAuthentication();

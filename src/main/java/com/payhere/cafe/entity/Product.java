@@ -10,8 +10,8 @@ import java.util.Date;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private Long product_id;
+    @Column(name = "productid")
+    private Long productid;
 
     @Column(name = "category")
     private String category;
@@ -31,8 +31,8 @@ public class Product {
     @Column(name = "barcode")
     private String barcode;
 
-    @Column(name = "expiration_date")
-    private Date expiration_date;
+    @Column(name = "expirationdate")
+    private Date expirationdate;
 
     @Column(name = "size")
     private String size;

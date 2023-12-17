@@ -5,9 +5,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 @Data
 public class LoginRequestDTO {
-    private String phoneNum;
+    private String phonenum;
     private String pw;
     public UsernamePasswordAuthenticationToken toAuthentication() {
-        return new UsernamePasswordAuthenticationToken(phoneNum, pw);
+        return new UsernamePasswordAuthenticationToken(phonenum, pw);
     }
 }

@@ -11,8 +11,8 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "phone_num")
-    private String phoneNum;
+    @Column(name = "phonenum")
+    private String phonenum;
 
     @Column(name = "pw")
     private String pw;
