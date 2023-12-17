@@ -1,4 +1,4 @@
-package com.payhere.cafe.domain.dto;
+package com.payhere.cafe.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

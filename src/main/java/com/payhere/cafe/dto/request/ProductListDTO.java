@@ -1,4 +1,4 @@
-package com.payhere.cafe.domain.dto.request;
+package com.payhere.cafe.dto.request;
 
 import lombok.Data;
 

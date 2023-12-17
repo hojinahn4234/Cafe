@@ -1,11 +1,13 @@
 package com.payhere.cafe.controller;
 
 
+import com.payhere.cafe.dto.Response;
 import com.payhere.cafe.entity.Product;
 import com.payhere.cafe.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +18,48 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     @Autowired
     private ProductService service;
+    private Response response;
 
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody Product product) {
-        return ResponseEntity.ok().body(service.insertProduct(product));
+        int code = service.insertProduct(product);
+        if(code == 200) {
+            return response.success(null, "ok", HttpStatus.OK);
+        }
+        else if(code == 2) {
+            return response.fail("", HttpStatus.BAD_REQUEST);
+        }
+        else {
+            return response.fail( "", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/update")
     public ResponseEntity<?> updateProduct(@RequestBody Product product) {
-        return ResponseEntity.ok().body(service.updateProduct(product));
+        int code = service.updateProduct(product);
+        if(code == 200) {
+            return response.success(null, "ok", HttpStatus.OK);
+        }
+        else if(code == 2) {
+            return response.fail("", HttpStatus.BAD_REQUEST);
+        }
+        else {
+            return response.fail( "", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/delete")
     public ResponseEntity<?> deleteProduct(@RequestBody Long productId) {
-        return ResponseEntity.ok().body(service.deleteProduct(productId));
+        int code = service.deleteProduct(productId);
+        if(code == 200) {
+            return response.success(null, "ok", HttpStatus.OK);
+        }
+        else if(code == 2) {
+            return response.fail("", HttpStatus.BAD_REQUEST);
+        }
+        else {
+            return response.fail( "", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/detail")

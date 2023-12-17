@@ -1,15 +1,15 @@
 package com.payhere.cafe.service;
 
-import com.payhere.cafe.domain.dto.response.ProdDetailResponseDTO;
+import com.payhere.cafe.dto.response.ProdDetailResponseDTO;
 import com.payhere.cafe.entity.Product;
 import com.payhere.cafe.exception.ResourceNotFoundException;
 import com.payhere.cafe.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,20 +20,14 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public int insertProduct(Product product) {
-        if(repository.save(product) != null) {
-            return 200;
-        } else {
-            return 1;
-        }
+        repository.save(product);
+        return 200;
     }
 
     @Override
     public int updateProduct(Product product) {
-        if(repository.save(product) != null) {
-            return 200;
-        } else {
-            return 1;
-        }
+        repository.save(product);
+        return 200;
     }
 
     @Override
@@ -52,6 +46,8 @@ public class ProductServiceImpl implements ProductService{
                 .findAll(PageRequest.of(page - 1, 10));
         return productsPage.getContent().stream()
                 .map(this::mapToProdDetailResponseDTO)
+                .collect(Collectors.toList())
+                .stream().sorted(Comparator.comparing(ProdDetailResponseDTO::getProductId).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -75,10 +71,10 @@ public class ProductServiceImpl implements ProductService{
 
 
     public ProdDetailResponseDTO mapToProdDetailResponseDTO(Product product) {
-        ProdDetailResponseDTO dto = new ProdDetailResponseDTO();
-        dto.setProductId(product.getProductId());
-        dto.setName(product.getName());
+        ProdDetailResponseDTO prodDetailResponseDTO = new ProdDetailResponseDTO();
+        prodDetailResponseDTO.setProductId(product.getProductId());
+        prodDetailResponseDTO.setName(product.getName());
 
-        return dto;
+        return prodDetailResponseDTO;
     }
 }
