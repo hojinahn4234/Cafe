@@ -21,7 +21,7 @@ import java.security.NoSuchAlgorithmException;
 public class UserController {
     @Autowired
     private UserService service;
-    private Response response;
+    private final Response response;
 
     @GetMapping("/test")
     public String test() {
@@ -32,7 +32,7 @@ public class UserController {
     public ResponseEntity<?> join(@RequestBody User user) throws NoSuchAlgorithmException {
         int code = service.join(user);
         if(code == 200) {
-            return response.success(null, "ok", HttpStatus.OK);
+            return response.success("", "ok", HttpStatus.OK);
         }
         else if(code == 2) {
             return response.fail("회원가입에 실패하였습니다.", HttpStatus.BAD_REQUEST);
@@ -46,7 +46,7 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) throws NoSuchAlgorithmException {
         int code = service.login(loginRequestDTO);
         if(code == 200) {
-            return response.success(null, "ok", HttpStatus.OK);
+            return response.success("", "ok", HttpStatus.OK);
         }
         else if(code == 2) {
             return response.fail("비밀번호를 틀리셨습니다.", HttpStatus.BAD_REQUEST);
@@ -60,7 +60,7 @@ public class UserController {
     public ResponseEntity<?> logout(TokenRequestDTO tokenRequestDTO) {
         int code = service.logout(tokenRequestDTO);
         if(code == 200) {
-            return response.success(null, "ok", HttpStatus.OK);
+            return response.success("", "ok", HttpStatus.OK);
         }
         else {
             return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);

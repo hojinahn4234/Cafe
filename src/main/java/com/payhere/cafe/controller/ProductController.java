@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     @Autowired
     private ProductService service;
-    private Response response;
+    private final Response response;
 
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody Product product) {
         int code = service.insertProduct(product);
         if(code == 200) {
-            return response.success(null, "ok", HttpStatus.OK);
+            return response.success("", "ok", HttpStatus.OK);
         }
         else if(code == 2) {
             return response.fail("", HttpStatus.BAD_REQUEST);
@@ -38,7 +38,7 @@ public class ProductController {
     public ResponseEntity<?> updateProduct(@RequestBody Product product) {
         int code = service.updateProduct(product);
         if(code == 200) {
-            return response.success(null, "ok", HttpStatus.OK);
+            return response.success("", "ok", HttpStatus.OK);
         }
         else if(code == 2) {
             return response.fail("", HttpStatus.BAD_REQUEST);
@@ -52,7 +52,7 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@RequestBody Long productId) {
         int code = service.deleteProduct(productId);
         if(code == 200) {
-            return response.success(null, "ok", HttpStatus.OK);
+            return response.success("", "ok", HttpStatus.OK);
         }
         else if(code == 2) {
             return response.fail("", HttpStatus.BAD_REQUEST);

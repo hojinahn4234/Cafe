@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<ProdDetailResponseDTO> searchProductList(String keyword) {
         return repository
-                .findAllNameContaining(keyword)
+                .findAllByNameContaining(keyword)
                 .stream()
                 .map(this::mapToProdDetailResponseDTO)
                 .collect(Collectors.toList());
@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService{
 
     public ProdDetailResponseDTO mapToProdDetailResponseDTO(Product product) {
         ProdDetailResponseDTO prodDetailResponseDTO = new ProdDetailResponseDTO();
-        prodDetailResponseDTO.setProductId(product.getProductId());
+        prodDetailResponseDTO.setProductId(product.getProduct_id());
         prodDetailResponseDTO.setName(product.getName());
 
         return prodDetailResponseDTO;
