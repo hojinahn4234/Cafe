@@ -25,7 +25,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
-    private final StringRedisTemplate stringRedisTemplate;
+    private final RedisTemplate RedisTemplate;
 
 
     @Bean
@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .antMatchers("/user/join", "/user/login").permitAll()   // 로그인, 회원가입은 제한 없음
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, stringRedisTemplate), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, RedisTemplate), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
