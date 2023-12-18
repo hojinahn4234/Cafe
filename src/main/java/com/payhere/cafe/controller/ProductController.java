@@ -3,7 +3,7 @@ package com.payhere.cafe.controller;
 
 import com.payhere.cafe.dto.Response;
 import com.payhere.cafe.entity.Product;
-import com.payhere.cafe.service.ProductService;
+import com.payhere.cafe.service.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/product")
 public class ProductController {
     @Autowired
-    private ProductService service;
+    private ProductServiceImpl service;
     private final Response response;
 
     @PostMapping("/add")

@@ -4,7 +4,7 @@ import com.payhere.cafe.dto.Response;
 import com.payhere.cafe.dto.request.LoginRequestDTO;
 import com.payhere.cafe.dto.request.TokenRequestDTO;
 import com.payhere.cafe.entity.User;
-import com.payhere.cafe.service.UserService;
+import com.payhere.cafe.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.security.NoSuchAlgorithmException;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    private UserService service;
+    private final UserServiceImpl service;
     private final Response response;
 
     @GetMapping("/test")
@@ -44,16 +44,12 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) throws NoSuchAlgorithmException {
-        int code = service.login(loginRequestDTO);
-        if(code == 200) {
-            return response.success("", "ok", HttpStatus.OK);
-        }
-        else if(code == 2) {
-            return response.fail("비밀번호를 틀리셨습니다.", HttpStatus.BAD_REQUEST);
-        }
-        else {
-            return response.fail("존재하지 않는 유저입니다.", HttpStatus.BAD_REQUEST);
-        }
+        return service.login(loginRequestDTO);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissue(@RequestBody TokenRequestDTO tokenRequestDTO) {
+        return service.reissue(tokenRequestDTO);
     }
 
     @GetMapping("/logout")
