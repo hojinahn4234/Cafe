@@ -1,6 +1,6 @@
 package com.payhere.cafe.controller;
 
-import com.payhere.cafe.dto.Response;
+import com.payhere.cafe.dto.response.Response;
 import com.payhere.cafe.dto.request.LoginRequestDTO;
 import com.payhere.cafe.dto.request.TokenRequestDTO;
 import com.payhere.cafe.entity.User;
@@ -12,14 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
     private final UserServiceImpl service;
     private final Response response;
 
@@ -29,10 +26,13 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody User user) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> join(@RequestBody User user) {
         int code = service.join(user);
         if(code == 200) {
             return response.success("", "ok", HttpStatus.OK);
+        }
+        else if(code == 3) {
+            return response.fail("비밀번호 암호화에 실패하였습니다. 죄송합니다.", HttpStatus.BAD_REQUEST);
         }
         else if(code == 2) {
             return response.fail("회원가입에 실패하였습니다.", HttpStatus.BAD_REQUEST);
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         return service.login(loginRequestDTO);
     }
 

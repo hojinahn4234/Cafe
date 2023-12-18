@@ -1,4 +1,4 @@
-package com.payhere.cafe.dto;
+package com.payhere.cafe.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

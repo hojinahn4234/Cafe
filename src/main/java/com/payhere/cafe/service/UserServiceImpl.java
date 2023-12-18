@@ -1,16 +1,14 @@
 package com.payhere.cafe.service;
 
-import com.payhere.cafe.dto.Response;
+import com.payhere.cafe.dto.response.Response;
 import com.payhere.cafe.dto.request.LoginRequestDTO;
 import com.payhere.cafe.dto.request.TokenRequestDTO;
 import com.payhere.cafe.dto.response.UserResponseDTO;
 import com.payhere.cafe.entity.User;
 import com.payhere.cafe.jwt.JwtTokenProvider;
 import com.payhere.cafe.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,56 +21,51 @@ import org.springframework.util.ObjectUtils;
 import javax.transaction.Transactional;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate redisTemplate;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final Response response;
-    @Autowired
-    UserServiceImpl(UserRepository repository, AuthenticationManagerBuilder authenticationManagerBuilder,
-                    JwtTokenProvider jwtTokenProvider, RedisTemplate redisTemplate, Response response) {
-        this.repository = repository;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.redisTemplate = redisTemplate;
-        this.response = response;
-    }
+    private final StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private static final String ID_KEY = "id";
+
+    public UserServiceImpl(
+            UserRepository repository, JwtTokenProvider jwtTokenProvider,
+            Response response, StringRedisTemplate redisTemplate, AuthenticationManagerBuilder authenticationManagerBuilder
+    ){
+        this.repository = repository;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.response = response;
+        this.redisTemplate = redisTemplate;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
+    }
 
     @Transactional
     @Override
-    public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) {
         LoginRequestDTO newrequest = new LoginRequestDTO();
         newrequest.setPhonenum(loginRequestDTO.getPhonenum());
-        newrequest.setPw(encrypt(loginRequestDTO.getPw()));
+        try {
+            newrequest.setPw(encrypt(loginRequestDTO.getPw()));
+        } catch (NoSuchAlgorithmException e) {
+            return response.fail("비밀번호 암호화에 실패하였습니다. 죄송합니다.", HttpStatus.BAD_REQUEST);
+        }
         User user = repository.findByPhonenum(loginRequestDTO.getPhonenum());
-        if(user != null) {
-            if((user.getPw()).equals(newrequest.getPw())) {
-                // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
-                // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
+        if (user != null) {
+            if ((user.getPw()).equals(newrequest.getPw())) {
                 UsernamePasswordAuthenticationToken authenticationToken = newrequest.toAuthentication();
                 log.info(authenticationToken.toString());
-                // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
-                // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
                 Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-                // 3. 인증 정보를 기반으로 JWT 토큰 생성
-                UserResponseDTO.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, loginRequestDTO.getPhonenum());
-
-                // 4. RefreshToken Redis 저장 (expirationTime 설정을 통해 자동 삭제 처리)
-                redisTemplate.opsForValue()
-                        .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+                UserResponseDTO.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, Math.toIntExact(user.getId()));
+                redisTemplate.opsForValue().set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
                 return response.success(tokenInfo, "ok", HttpStatus.OK);
-            }
-            else {
+            } else {
                 return response.fail("비밀번호를 틀리셨습니다.", HttpStatus.BAD_REQUEST);
             }
         } else {
@@ -81,10 +74,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int join(User user) throws NoSuchAlgorithmException {
+    public int join(User user) {
         User requestUser = new User();
         requestUser.setPhonenum(user.getPhonenum());
-        requestUser.setPw(encrypt(user.getPw()));
+        try {
+            requestUser.setPw(encrypt(user.getPw()));
+        } catch (NoSuchAlgorithmException e) {
+            return 3;
+        }
         if(repository.findByPhonenum(user.getPhonenum()) == null) {
             if(repository.save(requestUser) != null) {
                 return 200;
@@ -109,7 +106,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = jwtTokenProvider.getAuthentication(tokenRequestDTO.getAccessToken());
 
         // 3. Redis 에서 User email 을 기반으로 저장된 Refresh Token 값을 가져옵니다.
-        String refreshToken = (String)redisTemplate.opsForValue().get("RT:" + authentication.getName());
+        String refreshToken = redisTemplate.opsForValue().get("RT:" + authentication.getName());
         // (추가) 로그아웃되어 Redis 에 RefreshToken 이 존재하지 않는 경우 처리
         if(ObjectUtils.isEmpty(refreshToken)) {
             return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
@@ -120,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
         // 4. 새로운 토큰 생성
         UserResponseDTO.TokenInfo tokenInfo = jwtTokenProvider.generateToken(
-            authentication, (String) jwtTokenProvider.parseClaims(tokenRequestDTO.getAccessToken()).get(ID_KEY));
+            authentication, (Integer) jwtTokenProvider.parseClaims(tokenRequestDTO.getAccessToken()).get(ID_KEY));
 
         // 5. RefreshToken Redis 업데이트
         redisTemplate.opsForValue()
@@ -157,7 +154,6 @@ public class UserServiceImpl implements UserService {
     private String encrypt(String text) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(text.getBytes());
-
         return bytesToHex(md.digest());
     }
 

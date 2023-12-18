@@ -1,4 +1,4 @@
-package com.spamallday.payhere.auth;
+package com.payhere.cafe.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

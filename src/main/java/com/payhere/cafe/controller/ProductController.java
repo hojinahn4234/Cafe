@@ -1,7 +1,7 @@
 package com.payhere.cafe.controller;
 
 
-import com.payhere.cafe.dto.Response;
+import com.payhere.cafe.dto.response.Response;
 import com.payhere.cafe.entity.Product;
 import com.payhere.cafe.service.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;

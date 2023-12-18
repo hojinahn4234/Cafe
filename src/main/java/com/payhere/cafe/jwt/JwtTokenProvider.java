@@ -1,8 +1,6 @@
-package com.spamallday.payhere.auth;
+package com.payhere.cafe.jwt;
 
-import com.spamallday.payhere.dto.Token;
-import com.spamallday.payhere.exception.CustomErrorCode;
-import com.spamallday.payhere.exception.CustomException;
+import com.payhere.cafe.dto.response.UserResponseDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -38,7 +36,7 @@ public class JwtTokenProvider {
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public Token generateToken(Authentication authentication, Integer userId) {
+    public UserResponseDTO.TokenInfo generateToken(Authentication authentication, Integer id) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -50,8 +48,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
-                // 유저 DB의 PK 값을 넣어서 claim 생성
-                .claim("id", userId)
+                .claim("id", id)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -62,7 +59,7 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        return Token.builder()
+        return UserResponseDTO.TokenInfo.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -75,8 +72,8 @@ public class JwtTokenProvider {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-        if (claims.get("auth") == null) {
-            throw new CustomException(CustomErrorCode.TOKEN_UN_AUTH_ERROR);
+        if (claims.get("auth") == null || claims.get("id") == null) {
+            throw new RuntimeException("권한 정보 또는 ID가 없는 토큰");
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -94,8 +91,8 @@ public class JwtTokenProvider {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-        if (claims.get("auth") == null) {
-            throw new CustomException(CustomErrorCode.TOKEN_UN_AUTH_ERROR);
+        if (claims.get("auth") == null || claims.get("id") == null) {
+            throw new RuntimeException("권한 정보 또는 ID가 없는 토큰");
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -111,7 +108,7 @@ public class JwtTokenProvider {
         try {
             principal = new User(claims.get("id").toString(), "", authorities);
         }catch (NullPointerException e) {
-            throw new CustomException(CustomErrorCode.TOKEN_CLAIM_ERROR);
+            throw new RuntimeException("id가 없습니다");
         }
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
@@ -123,13 +120,13 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new CustomException(CustomErrorCode.TOKEN_VALID_ERROR);
+            throw new RuntimeException("유효하지 않은 토큰");
         } catch (ExpiredJwtException e) {
-            throw new CustomException(CustomErrorCode.TOKEN_EXPIRED_ERROR);
+            throw new RuntimeException("만료된 토큰");
         } catch (UnsupportedJwtException e) {
-            throw new CustomException(CustomErrorCode.TOKEN_UN_SUPPORT_ERROR);
+            throw new RuntimeException("지원하지 않는 토큰");
         } catch (IllegalArgumentException e) {
-            throw new CustomException(CustomErrorCode.TOKEN_EMPTY_CLAIM_ERROR);
+            throw new RuntimeException("비어있는 토큰");
         }
     }
 

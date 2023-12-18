@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import java.security.NoSuchAlgorithmException;
 
 public interface UserService {
-    int join(User user) throws NoSuchAlgorithmException;
+    int join(User user);
 
-    ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) throws NoSuchAlgorithmException;
+    ResponseEntity<?> login(LoginRequestDTO loginRequestDTO);
 
     ResponseEntity<?> reissue(TokenRequestDTO tokenRequestDTO);
 
