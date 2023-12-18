@@ -1,8 +1,6 @@
-package com.payhere.cafe.jwt;
+package com.spamallday.payhere.auth;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,14 +15,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_TYPE = "Bearer";
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
 
     @Override
@@ -35,8 +32,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         // 2. validateToken 으로 토큰 유효성 검사
         if (token != null && jwtTokenProvider.validateToken(token)) {
             // Redis 에 해당 accessToken logout 상태 확인
-            String isLogout = (String) redisTemplate.opsForValue().get(token);
-            log.info("isLogout : " + isLogout);
+            String isLogout = stringRedisTemplate.opsForValue().get(token);
             if (ObjectUtils.isEmpty(isLogout)) {
 //                Authentication authentication = jwtTokenProvider.getAuthentication(token);
 
@@ -59,5 +55,3 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         return null;
     }
 }
-
-
