@@ -3,11 +3,7 @@ package com.payhere.cafe.entity;
 
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

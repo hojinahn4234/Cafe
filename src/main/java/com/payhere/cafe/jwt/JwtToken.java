@@ -1,4 +1,4 @@
-package com.payhere.cafe.dto;
+package com.payhere.cafe.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,4 +11,5 @@ public class JwtToken {
     private String grantType;
     private String accessToken;
     private String refreshToken;
+    private Long refreshTokenExpirationTime;
 }
