@@ -2,6 +2,7 @@ package com.payhere.cafe.config;
 
 import com.payhere.cafe.jwt.JwtAuthenticationFilter;
 import com.payhere.cafe.jwt.JwtTokenProvider;
+import com.payhere.cafe.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +25,14 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 @EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomUserDetailsService customUserDetailsService;
+
     @Autowired
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private final StringRedisTemplate stringRedisTemplate;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

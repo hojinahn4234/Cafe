@@ -1,5 +1,6 @@
 package com.payhere.cafe.service;
 
+import com.payhere.cafe.dto.UserDTO;
 import com.payhere.cafe.dto.response.Response;
 import com.payhere.cafe.dto.request.LoginRequestDTO;
 import com.payhere.cafe.dto.request.TokenRequestDTO;
@@ -39,16 +40,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) {
-        String ecryptpw = passwordEncoder.encode(loginRequestDTO.getPw());
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequestDTO.getPhonenum(), loginRequestDTO.getPw());;
+    public ResponseEntity<?> login(UserDTO userDTO) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = userDTO.toAuth();
         log.info(usernamePasswordAuthenticationToken.toString());
         log.info(usernamePasswordAuthenticationToken.getPrincipal().toString());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(usernamePasswordAuthenticationToken);
         log.info(String.valueOf(authentication));
         User user = userRepository.findByPhonenum(usernamePasswordAuthenticationToken.getPrincipal().toString());
         Integer id = user.getId();
-        if ((user.getPw()).equals(ecryptpw)) {
+        if (passwordEncoder.matches(userDTO.getPw(),user.getPw())) {
             JwtToken tokenInfo = jwtTokenProvider.generateToken(authentication, id);
             stringRedisTemplate.opsForValue().set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
             return response.success(tokenInfo, "ok", HttpStatus.OK);
@@ -58,12 +58,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int join(User user) {
-        User requestUser = new User();
-        requestUser.setPhonenum(user.getPhonenum());
-        requestUser.setPw(passwordEncoder.encode(user.getPw()));
+    public int join(UserDTO user) {
+        user.setPw(passwordEncoder.encode(user.getPw()));
         if(userRepository.findByPhonenum(user.getPhonenum()) == null) {
-            if(userRepository.save(requestUser) != null) {
+            if(userRepository.save(user.toUserEntity()) != null) {
                 return 200;
             } else {
                 return 2;
