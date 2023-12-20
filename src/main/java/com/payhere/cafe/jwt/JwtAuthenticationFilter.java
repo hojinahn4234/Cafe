@@ -34,7 +34,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 //                Authentication authentication = jwtTokenProvider.getAuthentication(token);
 
                 // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
-                // 토큰 발행할 때 (number, auth) 사용했던 Number를 SecurityContext에 쓰지 않고 내부에서는 id를 사용 (id, auth)
                 // 내부의 다양한 곳에서 조회를 위해
                 Authentication authentication = jwtTokenProvider.getInternalAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    container_name: mysql
+    volumes:
+      - ./mysqldata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3307:3306
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  cafe:
+    image: cafe
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
