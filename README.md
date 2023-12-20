@@ -28,7 +28,7 @@ docker-compose up --build -d
 <hr>
 
 ### API 및 테스트 케이스   
-#### Postman을 통해 테스트 진행하였습니다.
+#### [Postman](https://foregoing-ice-46e.notion.site/cafe-API-0d6de1be01f142b6a7e856763f05bf0a?pvs=4)을 통해 테스트 진행하였습니다.
 <br>
 
 
