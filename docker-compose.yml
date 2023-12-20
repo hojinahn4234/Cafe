@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3"
 
 services:
   db:
@@ -8,22 +8,33 @@ services:
     volumes:
       - ./mysqldata:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=123456
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     ports:
-      - 3307:3306
-  redis:
+      - "3307:3306"
+
+  inmemory:
     image: redis
+    restart: always
+    container_name: redis
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    command: redis-server /usr/local/conf/redis.conf
     ports:
-      - 6379:6379
-  cafe:
-    image: cafe
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+      - "6379:6379"
+
+  app:
+    build: .
+    container_name: cafe-app
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
-      - redis
+      - db
+      - inmemory
+    restart: always
