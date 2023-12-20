@@ -1,7 +1,7 @@
 package com.payhere.cafe.util;
 
 public class NameConverter {
-    private static final int KOR_BASE = 0xAC00;    // '가'
+    private static final int KOR_BASE = 0xAC00;
     private static String[] consonants = {"ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ" , "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"};
 
     public static String toConsonant(String str) {

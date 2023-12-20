@@ -51,7 +51,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(
-                        auth -> auth.anyRequest().permitAll()
+//                        auth -> auth.anyRequest().permitAll()
+                        auth -> auth
+                                .requestMatchers("/user/**").permitAll()
+                                .requestMatchers("/product/**").hasRole("CAFE")
+                                .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())

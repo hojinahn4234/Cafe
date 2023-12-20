@@ -1,20 +1,22 @@
 package com.payhere.cafe.service;
 
+import com.payhere.cafe.dto.request.ProductDTO;
 import com.payhere.cafe.dto.response.ProdDetailResponseDTO;
 import com.payhere.cafe.entity.Product;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface ProductService {
-    int insertProduct(Product product);
+    ResponseEntity<?> insertProduct(ProductDTO product);
 
-    int updateProduct(Product product);
+    ResponseEntity<?> updateProduct(ProductDTO product);
 
-    int deleteProduct(Long productId);
+    ResponseEntity<?> deleteProduct(Long productId);
 
-    List<ProdDetailResponseDTO> getProductList(int page);
+    List<ProductDTO> getProductList(int page);
 
-    Product getProductDetail(Long productId);
+    ProductDTO getProductDetail(Long productId);
 
-    List<ProdDetailResponseDTO> searchProductList(String keyword);
+    List<ProductDTO> searchProductList(String keyword);
 }
